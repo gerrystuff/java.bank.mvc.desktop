@@ -30,13 +30,20 @@ public class BankView extends JFrame {
         this.exchangeView = new ExchangeView();
         this.inventoryMoneyView = new InventoryMoneyView();
 
-
         add(attentionBarView);
         add(exchangeView);
         add(inventoryMoneyView);
 
 
         setVisible(true);
+    }
+
+
+    public void setController(BankController bankController){
+
+        this.inventoryMoneyView.setController(bankController);
+        this.exchangeView.setController(bankController);
+
     }
 
 

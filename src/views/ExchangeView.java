@@ -1,10 +1,12 @@
 package views;
 
-import controllers.ExchangeController;
+import controllers.BankController;
 import utils.Utils;
 
 import javax.swing.*;
+import javax.swing.plaf.OptionPaneUI;
 import java.awt.*;
+import java.util.Optional;
 
 public class ExchangeView extends JPanel {
     JPanel exchangePanel, transactionPanel, ticketPanel, distributionPanel;
@@ -59,15 +61,7 @@ public class ExchangeView extends JPanel {
         distributionPanel.setBackground(Color.white);
         distributionPanel.setLayout(new GridLayout(0,2));
 
-        distributionPanel.add(new JLabel("Denomination",SwingConstants.CENTER));
-        distributionPanel.add(new JLabel("Quantity Bills",SwingConstants.CENTER));
 
-        for(int i = 0; i < Utils.denominationList.length; i++) {
-            JLabel p = new JLabel(Integer.toString(Utils.denominationList[i]),SwingConstants.CENTER);
-
-            distributionPanel.add(p);
-            distributionPanel.add(new JLabel(""));
-        }
 
         ticketPanel.add(ticketLabel,BorderLayout.NORTH);
         ticketPanel.add(distributionPanel,BorderLayout.CENTER);
@@ -82,30 +76,39 @@ public class ExchangeView extends JPanel {
     }
 
 
-    public int getImport(){
-        int $import = 0;
+    public Optional<Integer> getImport(){
+        String $import = transactionInput.getText();
 
-        try {
-          $import = Integer.parseInt(transactionInput.getText());
-        }catch (Exception e){
-            e.printStackTrace();
+        if(!$import.matches("[0-9]+")){
+            throwError("Solo digitos");
+            return Optional.empty();
         }
-        return $import;
+        return Optional.of(Integer.parseInt($import));
     }
 
 
-    public void setController(ExchangeController controller){
+    public void setController(BankController bankController){
 
-        this.transactionBtn.addActionListener(controller);
+        this.transactionBtn.addActionListener(bankController);
+    }
+
+
+    public void throwError(String error){
+        JOptionPane.showMessageDialog(null, error, "Error", 1);
+
     }
 
 
     public void setDistribution(int[] distribution){
         // Remove all data
         this.distributionPanel.removeAll();
+        distributionPanel.add(new JLabel("Denomination",SwingConstants.CENTER));
+        distributionPanel.add(new JLabel("Quantity Bills",SwingConstants.CENTER));
+
 
         for (int i = 0; i < Utils.denominationList.length; i++) {
-
+        if(distribution[i] == 0)
+            continue;
             // Add denomination
             this.distributionPanel.add(new JLabel(Integer.toString(Utils.denominationList[i]), SwingConstants.CENTER));
             // Add distribution bills

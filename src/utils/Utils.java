@@ -17,8 +17,16 @@ public class Utils {
         int [] arrayAux = new int[denominationList.length];
 
         for(int i = 0; i < arrayAux.length; i++){
-            arrayAux[i] = getRandomNumber(1,6);
+            arrayAux[i] = getRandomNumber(0,2);
         }
         return arrayAux;
     }
+
+    public static int lastDigit(int number){
+        return Math.abs(number % 10);
+    }
+    public static boolean isHundred(int number){
+        return Math.abs(number % 10) == 0 ? true :false;
+    }
+
 }

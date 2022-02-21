@@ -1,10 +1,13 @@
 package views;
 
-import controllers.InventoryMoneyController;
+import controllers.BankController;
 import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 public class InventoryMoneyView extends JPanel {
     JPanel inventoryPanel, btnsPanel;
@@ -12,13 +15,15 @@ public class InventoryMoneyView extends JPanel {
     public JButton addBillsBtn, hideInventoryBtn;
     private int totalMoney ;
     private boolean flag;
+    public boolean visibilityStatus ;
 
     public InventoryMoneyView(){
 
         setLayout(new BorderLayout());
-        title = new JLabel("Inventory Money : " + totalMoney, SwingConstants.CENTER);
-        flag = false;
+        title = new JLabel("Inventory Total Money : " + totalMoney, SwingConstants.CENTER);
         setWidgets();
+
+        visibilityStatus = true;
 
         add(title,BorderLayout.NORTH);
         add(inventoryPanel,BorderLayout.CENTER);
@@ -54,22 +59,43 @@ public class InventoryMoneyView extends JPanel {
         btnsPanel.add(addBillsBtn);
         btnsPanel.add(hideInventoryBtn);
 
+
+        int[] zeroArray = new int[Utils.denominationList.length];
+        Arrays.fill(zeroArray,0);
+        updateInventory(zeroArray);
+
     }
 
-    public void setController(InventoryMoneyController inventoryMoneyController){
-        this.addBillsBtn.addActionListener(inventoryMoneyController);
+    public void setController(BankController bankController){
+
+        this.hideInventoryBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if(visibilityStatus){
+                    inventoryPanel.setVisible(false);
+                    hideInventoryBtn.setText("Show");
+                    visibilityStatus = false;
+                }else{
+                    inventoryPanel.setVisible(true);
+                    hideInventoryBtn.setText("Hide");
+                    visibilityStatus = true;
+                }
+
+            }
+        });
+        this.addBillsBtn.addActionListener(bankController);
 
     }
 
-    public void setTotalMoney(int $totalMoney){
-        this.title.setText(Integer.toString($totalMoney));
-    }
 
     public void updateInventory(int[] inventory){
 
-        if(flag)
+        if(flag) {
             inventoryPanel.removeAll();
-
+            inventoryPanel.add(new JLabel("Denomination",SwingConstants.CENTER));
+            inventoryPanel.add(new JLabel("Quantity",SwingConstants.CENTER));
+        }
         totalMoney = 0;
 
             for (int i = 0; i < Utils.denominationList.length; i++) {
@@ -82,10 +108,12 @@ public class InventoryMoneyView extends JPanel {
 
                     // Add inventory quantity for bill
                     this.inventoryPanel.add(new JLabel(Integer.toString(inventory[i]), SwingConstants.CENTER));
+
             }
 
 
-            title.setText("Inventory Money : " + totalMoney);
+
+            title.setText("Inventory Total Money : " + totalMoney);
             flag = true;
             revalidate();
         }
